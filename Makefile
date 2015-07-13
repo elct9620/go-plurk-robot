@@ -1,7 +1,7 @@
 PKG=github.com/elct9620/go-plurk-robot
 MAIN_PKG=$(PKG)/plurk
 CMD_PKG=$(PKG)/cmd/go-plurk-robot
-PKGS=$(PKG)/logger
+PKGS=$(MAIN_PKG),$(PKG)/logger
 
 all: test
 
