@@ -51,6 +51,8 @@ func (c *Credential) Signature(uri *url.URL, method string, params url.Values) s
 		strings.Replace(url.QueryEscape(params.Encode()), "%2B", "%2520", -1), // Resolve space " " change to "+" after encode
 	)
 
+	Logger.Debug("Signature String %s", signatureURL)
+
 	key := []byte(fmt.Sprint(c.AppSecret, "&", c.TokenSecret))
 	h := hmac.New(sha1.New, key)
 	h.Write([]byte(signatureURL))
@@ -91,7 +93,7 @@ func get(endpoint string, token *Credential, params url.Values) (interface{}, er
 	if err != nil {
 		return nil, err
 	}
-	params = signParams(token, "GET1", uri, params)
+	params = signParams(token, "GET", uri, params)
 	requestUri = fmt.Sprint(requestUri, "?", params.Encode())
 	res, err := http.Get(requestUri)
 	Logger.Notice("GET %s", uri.String())

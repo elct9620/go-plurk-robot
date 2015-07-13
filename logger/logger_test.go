@@ -14,11 +14,11 @@ func createLogger() (*Logger, *bytes.Buffer) {
 	return log, buffer
 }
 
-func TestNotice(t *testing.T) {
+func Test_LoggerNotice(t *testing.T) {
 
 	log, buffer := createLogger()
 
-	log.Notice("Hello World")
+	log.Notice("Hello %s", "World")
 
 	bufString := string(buffer.Bytes())
 	expectedString := "NOTICE: Hello World"
@@ -28,9 +28,9 @@ func TestNotice(t *testing.T) {
 	}
 }
 
-func TestError(t *testing.T) {
+func Test_LoggerError(t *testing.T) {
 	log, buffer := createLogger()
-	log.Error("Hello World")
+	log.Error("Hello %s", "World")
 
 	bufString := string(buffer.Bytes())
 	expectedString := "ERROR: Hello World"
@@ -45,17 +45,17 @@ func TestError(t *testing.T) {
 	}
 }
 
-func TestDebug(t *testing.T) {
+func Test_LoggerDebug(t *testing.T) {
 	log, buffer := createLogger()
 
-	log.Debug("Debug Message")
+	log.Debug("Debug %s", "Message")
 
 	if len(buffer.Bytes()) > 0 {
 		t.Fatalf("Expected debug message hidden, but got %s", string(buffer.Bytes()))
 	}
 }
 
-func TestSetStyle(t *testing.T) {
+func Test_LoggerSetStyle(t *testing.T) {
 	log, _ := createLogger()
 
 	log.SetStyle(1, 1) // Red, Bold

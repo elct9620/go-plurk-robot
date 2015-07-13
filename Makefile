@@ -12,4 +12,4 @@ test:
 	go test ./...
 
 coverage:
-	go test -cover -coverprofile go-plurk-robot.cov -coverpkg $(PKGS) $(MAIN_PKG)
+	go test -covermode count -coverprofile go-plurk-robot.cov -coverpkg $(PKGS) $(MAIN_PKG)
