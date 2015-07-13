@@ -1,2 +1,3 @@
 go-plurk-robot
+!go-plurk-robot/
 *.cov
