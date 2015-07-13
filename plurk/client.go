@@ -6,6 +6,7 @@ import (
 	"crypto/sha1"
 	"encoding/base64"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"github.com/elct9620/go-plurk-robot/logger"
 	"io/ioutil"
@@ -33,6 +34,11 @@ type Credential struct {
 	AppSecret   string
 	Token       string
 	TokenSecret string
+}
+
+// Error
+type Error struct {
+	ErrorText string `json:"error_text"`
 }
 
 // Signature from params and url to generate OAuth 1.0 signature
@@ -81,10 +87,11 @@ func get(endpoint string, token *Credential, params url.Values) (interface{}, er
 
 	requestUri := fmt.Sprintf("%s/%s", apiBase, endpoint)
 	uri, err := url.Parse(requestUri)
+	// TODO(elct9620): Imrpove error handle
 	if err != nil {
 		return nil, err
 	}
-	params = signParams(token, "GET", uri, params)
+	params = signParams(token, "GET1", uri, params)
 	requestUri = fmt.Sprint(requestUri, "?", params.Encode())
 	res, err := http.Get(requestUri)
 	Logger.Notice("GET %s", uri.String())
@@ -99,7 +106,13 @@ func get(endpoint string, token *Credential, params url.Values) (interface{}, er
 		return nil, err
 	}
 
-	// NOTE(elct9620): Should return a JSON string for parse
+	if res.StatusCode != 200 {
+		var responseError Error
+		json.Unmarshal(data, &responseError)
+		Logger.Error(responseError.ErrorText)
+		return nil, errors.New(responseError.ErrorText)
+	}
+
 	var result interface{}
 	err = json.Unmarshal(data, &result)
 	if err != nil {
