@@ -9,5 +9,5 @@ before_install:
   - go get golang.org/x/tools/cmd/cover
 
 script:
-  - go test -coverprofile go-plurk-robot.cov github.com/elct9620/go-plurk-robot/plurk
+  - make coverage
   - $HOME/gopath/bin/goveralls -coverprofile=go-plurk-robot.cov -service=travis-ci
