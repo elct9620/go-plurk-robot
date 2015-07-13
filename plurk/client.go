@@ -5,7 +5,9 @@ import (
 	"crypto/hmac"
 	"crypto/sha1"
 	"encoding/base64"
+	"encoding/json"
 	"fmt"
+	"github.com/elct9620/go-plurk-robot/logger"
 	"io/ioutil"
 	"net/http"
 	"net/url"
@@ -13,6 +15,9 @@ import (
 	"strings"
 	"time"
 )
+
+// Logger
+var Logger = logger.New(nil, "Plurk Robot")
 
 // Endpoint
 const apiBase = "http://www.plurk.com/APP"
@@ -72,19 +77,36 @@ func signParams(token *Credential, method string, uri *url.URL, params url.Value
 }
 
 // Send GET Request to Plurk API
-func get(endpoint string, token *Credential, params url.Values) {
+func get(endpoint string, token *Credential, params url.Values) (interface{}, error) {
 
 	requestUri := fmt.Sprintf("%s/%s", apiBase, endpoint)
-	uri, _ := url.Parse(requestUri)
+	uri, err := url.Parse(requestUri)
+	if err != nil {
+		return nil, err
+	}
 	params = signParams(token, "GET", uri, params)
 	requestUri = fmt.Sprint(requestUri, "?", params.Encode())
-	res, _ := http.Get(requestUri)
+	res, err := http.Get(requestUri)
+	Logger.Notice("GET %s", uri.String())
+	Logger.Debug("Params %s", params.Encode())
+	if err != nil {
+		return nil, err
+	}
 
 	defer res.Body.Close()
-	data, _ := ioutil.ReadAll(res.Body)
+	data, err := ioutil.ReadAll(res.Body)
+	if err != nil {
+		return nil, err
+	}
 
 	// NOTE(elct9620): Should return a JSON string for parse
-	fmt.Println(string(data))
+	var result interface{}
+	err = json.Unmarshal(data, &result)
+	if err != nil {
+		return nil, err
+	}
+
+	return result, nil
 }
 
 // Send POST Request to Plurk API

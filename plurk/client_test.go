@@ -5,17 +5,16 @@ import (
 	"testing"
 )
 
-func TestSignature(t *testing.T) {
-	// Using Plurk Test Console generate Fake Signature
-	credential := Credential{
-		AppKey:      "TestAppKey",
-		AppSecret:   "TestAppSecret",
-		Token:       "rLXmPnnQpviV",
-		TokenSecret: "56Fgl58yOfqXOhHXX0ybvOmSnPQFvR2miYmm30A",
-	}
+// Using Plurk Test Console generate Fake Signature
+var credential Credential = Credential{
+	AppKey:      "TestAppKey",
+	AppSecret:   "TestAppSecret",
+	Token:       "rLXmPnnQpviV",
+	TokenSecret: "56Fgl58yOfqXOhHXX0ybvOmSnPQFvR2miYmm30A",
+}
 
-	uri, _ := url.Parse("http://www.plurk.com/APP/echo")
-	params := make(url.Values)
+func mockParams() url.Values {
+	var params url.Values = make(url.Values)
 
 	// OAuth 1.0 Basic
 	params.Set("oauth_consumer_key", credential.AppKey)
@@ -27,8 +26,14 @@ func TestSignature(t *testing.T) {
 	params.Set("oauth_nonce", "97990917")
 
 	params.Set("oauth_token", credential.Token)
+	return params
+}
 
-	signature := credential.Signature(uri, "GET", params)
+func TestSignature(t *testing.T) {
+
+	uri, _ := url.Parse("http://www.plurk.com/APP/echo")
+
+	signature := credential.Signature(uri, "GET", mockParams())
 
 	expectedSignature := "FEgaoJyXWYy3FBWYCog8NI63xRo="
 	if signature != expectedSignature {
