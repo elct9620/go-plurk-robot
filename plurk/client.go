@@ -1,3 +1,4 @@
+// Package for Plurk API 2.0 Client
 package plurk
 
 import (
@@ -9,12 +10,14 @@ import (
 	"net/http"
 	"net/url"
 	"strconv"
+	"strings"
 	"time"
 )
 
 // Endpoint
 const apiBase = "http://www.plurk.com/APP"
 
+// API Instance
 type Plurk struct {
 	credential Credential
 }
@@ -23,14 +26,33 @@ type Plurk struct {
 type Credential struct {
 	AppKey      string
 	AppSecret   string
-	OauthToken  string
+	Token       string
 	TokenSecret string
 }
 
-func nonce() string { // Simple use timestamp to generate unique nonce
+// Signature from params and url to generate OAuth 1.0 signature
+func (c *Credential) Signature(uri *url.URL, method string, params url.Values) string {
+	// HMAC-SHA1
+	var signatureURL = fmt.Sprintf(
+		"%s&%s&%s", // Method&URI&Params
+		method,
+		url.QueryEscape(uri.String()),
+		strings.Replace(url.QueryEscape(params.Encode()), "%2B", "%2520", -1), // Resolve space " " change to "+" after encode
+	)
+
+	key := []byte(fmt.Sprint(c.AppSecret, "&", c.TokenSecret))
+	h := hmac.New(sha1.New, key)
+	h.Write([]byte(signatureURL))
+	return base64.StdEncoding.EncodeToString(h.Sum(nil))
+}
+
+// Create OAuth 1.0 nonce
+// Simple use timestamp to generate unique nonce
+func nonce() string {
 	return strconv.FormatInt(time.Now().UnixNano(), 16)
 }
 
+// Add OAuth 1.0 request params into request
 func signParams(token *Credential, method string, uri *url.URL, params url.Values) url.Values {
 
 	// OAuth 1.0 Basic
@@ -42,26 +64,14 @@ func signParams(token *Credential, method string, uri *url.URL, params url.Value
 	params.Set("oauth_timestamp", strconv.FormatInt(time.Now().Unix(), 10))
 	params.Set("oauth_nonce", nonce())
 
-	params.Set("oauth_token", token.OauthToken)
+	params.Set("oauth_token", token.Token)
 
-	// HMAC-SHA1
-	var signatureURL = fmt.Sprintf(
-		"%s&%s&%s", // Method&URI&Params
-		method,
-		url.QueryEscape(uri.String()),
-		url.QueryEscape(params.Encode()),
-	)
-
-	key := []byte(fmt.Sprint(token.AppSecret, "&", token.TokenSecret))
-	h := hmac.New(sha1.New, key)
-	h.Write([]byte(signatureURL))
-	signature := base64.StdEncoding.EncodeToString(h.Sum(nil))
-
-	params.Set("oauth_signature", signature)
+	params.Set("oauth_signature", token.Signature(uri, method, params))
 
 	return params
 }
 
+// Send GET Request to Plurk API
 func get(endpoint string, token *Credential, params url.Values) {
 
 	requestUri := fmt.Sprintf("%s/%s", apiBase, endpoint)
@@ -73,24 +83,34 @@ func get(endpoint string, token *Credential, params url.Values) {
 	defer res.Body.Close()
 	data, _ := ioutil.ReadAll(res.Body)
 
-	// Simple debug result
+	// NOTE(elct9620): Should return a JSON string for parse
 	fmt.Println(string(data))
 }
 
+// Send POST Request to Plurk API
 func post() {
-
+	// NOTE:(elct9620): Should implement POST Method same as GET
 }
 
-func New(AppKey string, AppSecret string, OauthToken string, TokenSecret string) *Plurk {
+// Helper to generate Pluck Instance
+func New(AppKey string, AppSecret string, Token string, TokenSecret string) *Plurk {
 	credential := Credential{
 		AppKey:      AppKey,
 		AppSecret:   AppSecret,
-		OauthToken:  OauthToken,
+		Token:       Token,
 		TokenSecret: TokenSecret,
 	}
 	return &Plurk{credential: credential}
 }
 
-func (plurk *Plurk) Echo() {
-	get("echo", &plurk.credential, make(url.Values))
+// Echo, Plruk API which can return same data
+func (plurk *Plurk) Echo(data string) {
+	params := make(url.Values)
+
+	// If has data, add data as parameter
+	if len(data) > 0 {
+		params.Set("data", data)
+	}
+
+	get("echo", &plurk.credential, params)
 }

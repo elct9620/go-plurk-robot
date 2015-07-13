@@ -8,16 +8,17 @@ import (
 var (
 	AppKey      string
 	AppSecret   string
-	OauthToken  string
+	Token       string
 	TokenSecret string
 )
 
 func main() {
 	AppKey = os.Getenv("PLURK_APP_KEY")
 	AppSecret = os.Getenv("PLURK_APP_SECRET")
-	OauthToken = os.Getenv("PLURK_OAUTH_TOKEN")
+	Token = os.Getenv("PLURK_OAUTH_TOKEN")
 	TokenSecret = os.Getenv("PLURK_OAUTH_SECRET")
 
-	client := plurk.New(AppKey, AppSecret, OauthToken, TokenSecret)
-	client.Echo()
+	client := plurk.New(AppKey, AppSecret, Token, TokenSecret)
+	client.Echo("Hello World++ WTF 囧 __**//\\QQ AA")
+	client.Echo("")
 }
