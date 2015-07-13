@@ -54,3 +54,16 @@ func TestDebug(t *testing.T) {
 		t.Fatalf("Expected debug message hidden, but got %s", string(buffer.Bytes()))
 	}
 }
+
+func TestSetStyle(t *testing.T) {
+	log, _ := createLogger()
+
+	log.SetStyle(1, 1) // Red, Bold
+
+	bufString := log.Format("Style", "")
+	expectedStyle := "\x1b[1;31m"
+
+	if !strings.Contains(bufString, expectedStyle) {
+		t.Fatalf("Expected style is %s (Red, Bold) but got %s", expectedStyle, bufString)
+	}
+}

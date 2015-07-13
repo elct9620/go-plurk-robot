@@ -49,13 +49,13 @@ func (l *Logger) SetStyle(style int, color int) {
 }
 
 // Notice
-func (l Logger) Notice(message string, v ...interface{}) {
+func (l *Logger) Notice(message string, v ...interface{}) {
 	l.SetStyle(Normal, NoColor)
 	l.Println(l.Format("Notice", message, v...))
 }
 
 // Error
-func (l Logger) Error(message string, v ...interface{}) {
+func (l *Logger) Error(message string, v ...interface{}) {
 	l.SetStyle(Normal, Red)
 	l.Println(l.Format("Error", message, v...))
 }
