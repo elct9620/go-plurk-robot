@@ -30,8 +30,7 @@ build:
     - script:
         name: go get
         code: |
-          go get github.com/tools/godep
-          godep restore
+          go get ./...
 
     # Build the project
     - script:
