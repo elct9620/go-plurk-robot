@@ -10,5 +10,10 @@ build:
 test:
 	go test $(MAIN_PKG)
 
+save-dep:
+	godep save ./...
+
+save: save-dep
+
 coverage:
 	go test -cover -coverprofile go-plurk-robot.cov $(MAIN_PKG)
