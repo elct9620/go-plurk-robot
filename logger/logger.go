@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"io"
 	"log"
-	"os"
 	"strings"
 	"time"
 )
@@ -30,16 +29,22 @@ const (
 	NoColor
 )
 
+type NullOutput struct{}
+
+func (NullOutput) Write(p []byte) (int, error) {
+	return len(p), nil
+}
+
 var prefix string = ""
 var outputStyle string = ""
-var output io.Writer = os.Stdout
+var output io.Writer = NullOutput{}
 
 var l *log.Logger = log.New(output, "", 0)
 
 // New Logger
 func Config(out io.Writer, p string) {
 	if out == nil {
-		out = os.Stdout
+		out = NullOutput{}
 	}
 	l = log.New(out, "", 0)
 	prefix = p
