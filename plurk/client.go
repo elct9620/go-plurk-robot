@@ -23,6 +23,7 @@ const apiBase = "http://www.plurk.com/APP"
 // API Instance
 type Plurk struct {
 	credential Credential
+	ApiBase    string
 }
 
 // Robot Authorize Information
@@ -82,15 +83,15 @@ func signParams(token *Credential, method string, uri *url.URL, params url.Value
 }
 
 // Send GET Request to Plurk API
-func get(endpoint string, token *Credential, params url.Values) (interface{}, error) {
+func (plurk *Plurk) Get(endpoint string, params url.Values) (interface{}, error) {
 
-	requestUri := fmt.Sprintf("%s/%s", apiBase, endpoint)
+	requestUri := fmt.Sprintf("%s/%s", plurk.ApiBase, endpoint)
 	uri, err := url.Parse(requestUri)
 	// TODO(elct9620): Imrpove error handle
 	if err != nil {
 		return nil, err
 	}
-	params = signParams(token, "GET", uri, params)
+	params = signParams(&plurk.credential, "GET", uri, params)
 	requestUri = fmt.Sprint(requestUri, "?", params.Encode())
 	res, err := http.Get(requestUri)
 	logger.Info("GET %s", uri.String())
@@ -134,7 +135,7 @@ func New(AppKey string, AppSecret string, Token string, TokenSecret string) *Plu
 		Token:       Token,
 		TokenSecret: TokenSecret,
 	}
-	return &Plurk{credential: credential}
+	return &Plurk{credential: credential, ApiBase: apiBase}
 }
 
 // Echo, Plruk API which can return same data
@@ -146,5 +147,5 @@ func (plurk *Plurk) Echo(data string) {
 		params.Set("data", data)
 	}
 
-	get("echo", &plurk.credential, params)
+	plurk.Get("echo", params)
 }

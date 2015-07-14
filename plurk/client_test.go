@@ -1,6 +1,9 @@
 package plurk
 
 import (
+	"fmt"
+	"net/http"
+	"net/http/httptest"
 	"net/url"
 	"testing"
 )
@@ -62,4 +65,24 @@ func Test_SignParams(t *testing.T) {
 	if signature != expectedSignature {
 		t.Fatalf("Expected signature is %s but generated %s", expectedSignature, signature)
 	}
+}
+
+func Test_PlurkGet(t *testing.T) {
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(200)
+		w.Header().Set("Content-Type", "application/json")
+		fmt.Fprintln(w, `{"message": "message"}`)
+	}))
+
+	defer server.Close()
+
+	plurkClient := &Plurk{credential: credential, ApiBase: server.URL}
+	resultObject, _ := plurkClient.Get("/", make(url.Values))
+
+	result := resultObject.(map[string]interface{})
+
+	if result["message"] != "message" {
+		t.Fatalf("Expected get JSON response with message, but got %#v", result)
+	}
+
 }
