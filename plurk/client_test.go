@@ -29,7 +29,7 @@ func mockParams() url.Values {
 	return params
 }
 
-func TestSignature(t *testing.T) {
+func Test_Signature(t *testing.T) {
 
 	uri, _ := url.Parse("http://www.plurk.com/APP/echo")
 
@@ -41,10 +41,25 @@ func TestSignature(t *testing.T) {
 	}
 }
 
-func TestNonce(t *testing.T) {
+func Test_Nonce(t *testing.T) {
 	n := nonce()
 
 	if len(n) < 8 {
 		t.Fatalf("nonce is %s, exected something longer", n)
+	}
+}
+
+func Test_SignParams(t *testing.T) {
+	uri, _ := url.Parse("http://www.plurk.com/APP/echo")
+
+	signedParams := signParams(&credential, "GET", uri, make(url.Values))
+
+	signature := signedParams.Get("oauth_signature")
+	signedParams.Del("oauth_signature")
+
+	expectedSignature := credential.Signature(uri, "GET", signedParams)
+
+	if signature != expectedSignature {
+		t.Fatalf("Expected signature is %s but generated %s", expectedSignature, signature)
 	}
 }
