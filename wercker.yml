@@ -30,6 +30,7 @@ build:
     - script:
         name: go get
         code: |
+          go get github.com/stretchr/testify
           go get ./...
 
     # Build the project
