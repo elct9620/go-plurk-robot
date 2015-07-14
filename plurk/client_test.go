@@ -68,6 +68,18 @@ func Test_SignParams(t *testing.T) {
 	}
 }
 
+func Test_New(t *testing.T) {
+	plurk := New(credential.AppKey, credential.AppSecret, credential.Token, credential.TokenSecret)
+
+	if plurk.credential != credential {
+		t.Fatalf("Expected credential %#v, but got %#v", credential, plurk.credential)
+	}
+
+	if plurk.ApiBase != apiBase {
+		t.Fatalf("Expected api base %s, but got %s", apiBase, plurk.ApiBase)
+	}
+}
+
 func Test_PlurkGet(t *testing.T) {
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(200)
@@ -85,6 +97,26 @@ func Test_PlurkGet(t *testing.T) {
 
 	if result["message"] != "message" {
 		t.Fatalf("Expected get JSON response with message, but got %#v", result)
+	}
+
+}
+
+func Test_PlurkGetError(t *testing.T) {
+	errorText := "request error!"
+
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(400)
+		w.Header().Set("Content-Type", "application/json")
+		fmt.Fprintf(w, "{\"error_text\": \"%s\"}", errorText)
+	}))
+
+	defer server.Close()
+
+	plurkClient := &Plurk{credential: credential, ApiBase: server.URL}
+	_, err := plurkClient.Get("/", make(url.Values))
+
+	if err.Error() != errorText {
+		t.Fatalf("Expected get error message %s, but got %s", errorText, err.Error())
 	}
 
 }
