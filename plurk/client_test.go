@@ -3,6 +3,7 @@ package plurk
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/stretchr/testify/assert"
 	"net/http"
 	"net/http/httptest"
 	"net/url"
@@ -40,17 +41,13 @@ func Test_Signature(t *testing.T) {
 	signature := credential.Signature(uri, "GET", mockParams())
 
 	expectedSignature := "FEgaoJyXWYy3FBWYCog8NI63xRo="
-	if signature != expectedSignature {
-		t.Fatalf("Expected signature is %s but generated %s", expectedSignature, signature)
-	}
+	assert.Equal(t, signature, expectedSignature)
 }
 
 func Test_Nonce(t *testing.T) {
 	n := nonce()
 
-	if len(n) < 8 {
-		t.Fatalf("nonce is %s, exected something longer", n)
-	}
+	assert.False(t, len(n) < 8, "nonce %s should longer then 8", n)
 }
 
 func Test_SignParams(t *testing.T) {
@@ -63,21 +60,14 @@ func Test_SignParams(t *testing.T) {
 
 	expectedSignature := credential.Signature(uri, "GET", signedParams)
 
-	if signature != expectedSignature {
-		t.Fatalf("Expected signature is %s but generated %s", expectedSignature, signature)
-	}
+	assert.Equal(t, signature, expectedSignature)
 }
 
 func Test_New(t *testing.T) {
 	plurk := New(credential.AppKey, credential.AppSecret, credential.Token, credential.TokenSecret)
 
-	if plurk.credential != credential {
-		t.Fatalf("Expected credential %#v, but got %#v", credential, plurk.credential)
-	}
-
-	if plurk.ApiBase != apiBase {
-		t.Fatalf("Expected api base %s, but got %s", apiBase, plurk.ApiBase)
-	}
+	assert.Equal(t, plurk.credential, credential)
+	assert.Equal(t, plurk.ApiBase, apiBase)
 }
 
 func Test_PlurkGet(t *testing.T) {
@@ -95,10 +85,7 @@ func Test_PlurkGet(t *testing.T) {
 	var result map[string]string
 	json.Unmarshal(data, &result)
 
-	if result["message"] != "message" {
-		t.Fatalf("Expected get JSON response with message, but got %#v", result)
-	}
-
+	assert.Equal(t, result["message"], "message")
 }
 
 func Test_PlurkGetError(t *testing.T) {
@@ -115,10 +102,7 @@ func Test_PlurkGetError(t *testing.T) {
 	plurkClient := &Plurk{credential: credential, ApiBase: server.URL}
 	_, err := plurkClient.Get("/", make(url.Values))
 
-	if err.Error() != errorText {
-		t.Fatalf("Expected get error message %s, but got %s", errorText, err.Error())
-	}
-
+	assert.Equal(t, err.Error(), errorText)
 }
 
 func Test_PlurkEcho(t *testing.T) {
@@ -136,12 +120,6 @@ func Test_PlurkEcho(t *testing.T) {
 	plurkClient := &Plurk{credential: credential, ApiBase: server.URL}
 	result, _ := plurkClient.Echo(requestData)
 
-	if result.Length != len(requestData) {
-		t.Fatalf("Expected return length %d, but got %d", len(requestData), result.Length)
-	}
-
-	if result.Data != requestData {
-		t.Fatalf("Expected return data %s, but got %s", requestData, result.Data)
-	}
-
+	assert.Equal(t, result.Length, len(requestData))
+	assert.Equal(t, result.Data, requestData)
 }

@@ -2,7 +2,7 @@ package logger
 
 import (
 	"bytes"
-	"strings"
+	"github.com/stretchr/testify/assert"
 	"testing"
 )
 
@@ -14,18 +14,16 @@ func configLogger() *bytes.Buffer {
 	return buffer
 }
 
-func Test_LoggerInfo(t *testing.T) {
+func Test_Info(t *testing.T) {
 
 	buffer := configLogger()
 
-	Info("Hello %s", "World")
+	Info("Hello World")
 
 	bufString := string(buffer.Bytes())
 	expectedString := "INFO: Hello World"
 
-	if !strings.Contains(bufString, expectedString) {
-		t.Fatalf("Expected contains %s, but got %s", expectedString, bufString)
-	}
+	assert.Contains(t, bufString, expectedString)
 }
 
 func Test_Error(t *testing.T) {
@@ -36,13 +34,8 @@ func Test_Error(t *testing.T) {
 	expectedString := "ERROR: Hello World"
 	expectedStyle := "\x1b[0;31m"
 
-	if !strings.Contains(bufString, expectedString) {
-		t.Fatalf("Expected contains %s, but got %s", expectedString, bufString)
-	}
-
-	if !strings.Contains(bufString, expectedStyle) {
-		t.Fatalf("Expected ASCII Color Red, but got %s", bufString)
-	}
+	assert.Contains(t, bufString, expectedString)
+	assert.Contains(t, bufString, expectedStyle)
 }
 
 func Test_Warn(t *testing.T) {
@@ -53,13 +46,8 @@ func Test_Warn(t *testing.T) {
 	expectedString := "WARN: Hello World"
 	expectedStyle := "\x1b[0;33m"
 
-	if !strings.Contains(bufString, expectedString) {
-		t.Fatalf("Expected contains %s, but got %s", expectedString, bufString)
-	}
-
-	if !strings.Contains(bufString, expectedStyle) {
-		t.Fatalf("Expected ASCII Color Yellow, but got %s", bufString)
-	}
+	assert.Contains(t, bufString, expectedString)
+	assert.Contains(t, bufString, expectedStyle)
 }
 
 func Test_Debug(t *testing.T) {
@@ -67,9 +55,7 @@ func Test_Debug(t *testing.T) {
 
 	Debug("Debug %s", "Message")
 
-	if len(buffer.Bytes()) > 0 {
-		t.Fatalf("Expected debug message hidden, but got %s", string(buffer.Bytes()))
-	}
+	assert.Len(t, buffer.Bytes(), 0)
 }
 
 func Test_SetStyle(t *testing.T) {
@@ -80,7 +66,5 @@ func Test_SetStyle(t *testing.T) {
 	bufString := Format("Style", "")
 	expectedStyle := "\x1b[1;31m"
 
-	if !strings.Contains(bufString, expectedStyle) {
-		t.Fatalf("Expected style is %s (Red, Bold) but got %s", expectedStyle, bufString)
-	}
+	assert.Contains(t, bufString, expectedStyle)
 }
