@@ -2,6 +2,6 @@
 
 package logger
 
-func (l *Logger) Debug(message string, v ...interface{}) {
+func Debug(message string, v ...interface{}) {
 
 }

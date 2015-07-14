@@ -30,38 +30,45 @@ const (
 	NoColor
 )
 
-type Logger struct {
-	prefix      string
-	outputStyle string
-	*log.Logger
-}
+var prefix string = ""
+var outputStyle string = ""
+var output io.Writer = os.Stdout
+
+var l *log.Logger = log.New(output, "", 0)
 
 // New Logger
-func New(out io.Writer, prefix string) *Logger {
+func Config(out io.Writer, p string) {
 	if out == nil {
 		out = os.Stdout
 	}
-	return &Logger{prefix: prefix, Logger: log.New(out, "", 0)}
+	l = log.New(out, "", 0)
+	prefix = p
 }
 
-func (l *Logger) SetStyle(style int, color int) {
-	l.outputStyle = fmt.Sprintf("\x1b[%0d;3%dm", style, color)
+func SetStyle(style int, color int) {
+	outputStyle = fmt.Sprintf("\x1b[%0d;3%dm", style, color)
 }
 
 // Notice
-func (l *Logger) Notice(message string, v ...interface{}) {
-	l.SetStyle(Normal, NoColor)
-	l.Println(l.Format("Notice", message, v...))
+func Info(message string, v ...interface{}) {
+	SetStyle(Normal, NoColor)
+	l.Println(Format("Info", message, v...))
+}
+
+// Warn
+func Warn(message string, v ...interface{}) {
+	SetStyle(Normal, Yellow)
+	l.Println(Format("Warn", message, v...))
 }
 
 // Error
-func (l *Logger) Error(message string, v ...interface{}) {
-	l.SetStyle(Normal, Red)
-	l.Println(l.Format("Error", message, v...))
+func Error(message string, v ...interface{}) {
+	SetStyle(Normal, Red)
+	l.Println(Format("Error", message, v...))
 }
 
 // Format Output String
-func (l *Logger) Format(logType string, message string, v ...interface{}) string {
+func Format(logType string, message string, v ...interface{}) string {
 	now := time.Now().Local().Format("2006/01/02 03:04:05")
-	return fmt.Sprintf("%s%s [ %s ] %6s: %s", l.outputStyle, now, l.prefix, strings.ToUpper(logType), fmt.Sprintf(message, v...))
+	return fmt.Sprintf("%s%s [ %s ] %6s: %s", outputStyle, now, prefix, strings.ToUpper(logType), fmt.Sprintf(message, v...))
 }

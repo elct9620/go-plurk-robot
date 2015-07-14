@@ -6,31 +6,31 @@ import (
 	"testing"
 )
 
-func createLogger() (*Logger, *bytes.Buffer) {
+func configLogger() *bytes.Buffer {
 	var buf []byte
 	buffer := bytes.NewBuffer(buf)
-	log := New(buffer, "")
+	Config(buffer, "")
 
-	return log, buffer
+	return buffer
 }
 
-func Test_LoggerNotice(t *testing.T) {
+func Test_LoggerInfo(t *testing.T) {
 
-	log, buffer := createLogger()
+	buffer := configLogger()
 
-	log.Notice("Hello %s", "World")
+	Info("Hello %s", "World")
 
 	bufString := string(buffer.Bytes())
-	expectedString := "NOTICE: Hello World"
+	expectedString := "INFO: Hello World"
 
 	if !strings.Contains(bufString, expectedString) {
 		t.Fatalf("Expected contains %s, but got %s", expectedString, bufString)
 	}
 }
 
-func Test_LoggerError(t *testing.T) {
-	log, buffer := createLogger()
-	log.Error("Hello %s", "World")
+func Test_Error(t *testing.T) {
+	buffer := configLogger()
+	Error("Hello %s", "World")
 
 	bufString := string(buffer.Bytes())
 	expectedString := "ERROR: Hello World"
@@ -45,22 +45,39 @@ func Test_LoggerError(t *testing.T) {
 	}
 }
 
-func Test_LoggerDebug(t *testing.T) {
-	log, buffer := createLogger()
+func Test_Warn(t *testing.T) {
+	buffer := configLogger()
+	Warn("Hello %s", "World")
 
-	log.Debug("Debug %s", "Message")
+	bufString := string(buffer.Bytes())
+	expectedString := "WARN: Hello World"
+	expectedStyle := "\x1b[0;33m"
+
+	if !strings.Contains(bufString, expectedString) {
+		t.Fatalf("Expected contains %s, but got %s", expectedString, bufString)
+	}
+
+	if !strings.Contains(bufString, expectedStyle) {
+		t.Fatalf("Expected ASCII Color Yellow, but got %s", bufString)
+	}
+}
+
+func Test_Debug(t *testing.T) {
+	buffer := configLogger()
+
+	Debug("Debug %s", "Message")
 
 	if len(buffer.Bytes()) > 0 {
 		t.Fatalf("Expected debug message hidden, but got %s", string(buffer.Bytes()))
 	}
 }
 
-func Test_LoggerSetStyle(t *testing.T) {
-	log, _ := createLogger()
+func Test_SetStyle(t *testing.T) {
+	configLogger()
 
-	log.SetStyle(1, 1) // Red, Bold
+	SetStyle(1, 1) // Red, Bold
 
-	bufString := log.Format("Style", "")
+	bufString := Format("Style", "")
 	expectedStyle := "\x1b[1;31m"
 
 	if !strings.Contains(bufString, expectedStyle) {

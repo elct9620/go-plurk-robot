@@ -3,7 +3,7 @@
 package logger
 
 // Debug
-func (l *Logger) Debug(message string, v ...interface{}) {
-	l.SetStyle(Normal, Blue)
-	l.Println(l.Format("Debug", message, v...))
+func Debug(message string, v ...interface{}) {
+	SetStyle(Normal, Blue)
+	l.Println(Format("Debug", message, v...))
 }

@@ -17,9 +17,6 @@ import (
 	"time"
 )
 
-// Logger
-var Logger = logger.New(nil, "Plurk Robot")
-
 // Endpoint
 const apiBase = "http://www.plurk.com/APP"
 
@@ -51,7 +48,7 @@ func (c *Credential) Signature(uri *url.URL, method string, params url.Values) s
 		strings.Replace(url.QueryEscape(params.Encode()), "%2B", "%2520", -1), // Resolve space " " change to "+" after encode
 	)
 
-	Logger.Debug("Signature String %s", signatureURL)
+	logger.Debug("Signature String %s", signatureURL)
 
 	key := []byte(fmt.Sprint(c.AppSecret, "&", c.TokenSecret))
 	h := hmac.New(sha1.New, key)
@@ -96,8 +93,8 @@ func get(endpoint string, token *Credential, params url.Values) (interface{}, er
 	params = signParams(token, "GET", uri, params)
 	requestUri = fmt.Sprint(requestUri, "?", params.Encode())
 	res, err := http.Get(requestUri)
-	Logger.Notice("GET %s", uri.String())
-	Logger.Debug("Params %s", params.Encode())
+	logger.Info("GET %s", uri.String())
+	logger.Debug("Params %s", params.Encode())
 	if err != nil {
 		return nil, err
 	}
@@ -111,7 +108,7 @@ func get(endpoint string, token *Credential, params url.Values) (interface{}, er
 	if res.StatusCode != 200 {
 		var responseError Error
 		json.Unmarshal(data, &responseError)
-		Logger.Error(responseError.ErrorText)
+		logger.Error(responseError.ErrorText)
 		return nil, errors.New(responseError.ErrorText)
 	}
 
