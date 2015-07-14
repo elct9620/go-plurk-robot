@@ -124,6 +124,45 @@ func Test_PlurkEcho(t *testing.T) {
 	assert.Equal(t, requestData, result.Data)
 }
 
+func Test_PlurkPost(t *testing.T) {
+	postData := "POST Data"
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(200)
+		w.Header().Set("Content-Type", "application/json")
+		data := r.PostFormValue("data")
+		fmt.Fprintf(w, "{\"data\": \"%s\"}", data)
+	}))
+
+	defer server.Close()
+
+	plurkClient := &Plurk{credential: credential, ApiBase: server.URL}
+	params := make(url.Values)
+	params.Add("data", postData)
+	data, _ := plurkClient.Post("/", params)
+
+	var result map[string]string
+	json.Unmarshal(data, &result)
+
+	assert.Equal(t, postData, result["data"])
+}
+
+func Test_PlurkPostError(t *testing.T) {
+	errorText := "request error!"
+
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(400)
+		w.Header().Set("Content-Type", "application/json")
+		fmt.Fprintf(w, "{\"error_text\": \"%s\"}", errorText)
+	}))
+
+	defer server.Close()
+
+	plurkClient := &Plurk{credential: credential, ApiBase: server.URL}
+	_, err := plurkClient.Post("/", make(url.Values))
+
+	assert.Equal(t, errorText, err.Error(), err.Error())
+}
+
 func Test_PlurkGetTimeline(t *testing.T) {
 	plurk := New(credential.AppKey, credential.AppSecret, credential.Token, credential.TokenSecret)
 	timeline := plurk.GetTimeline()
