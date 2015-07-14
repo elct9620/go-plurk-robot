@@ -123,8 +123,35 @@ func (plurk *Plurk) Get(endpoint string, params url.Values) ([]byte, error) {
 }
 
 // Send POST Request to Plurk API
-func post() {
-	// NOTE:(elct9620): Should implement POST Method same as GET
+func (plurk *Plurk) Post(endpoint string, params url.Values) ([]byte, error) {
+	requestUri := fmt.Sprintf("%s/%s", plurk.ApiBase, endpoint)
+	uri, err := url.Parse(requestUri)
+	// TODO(elct9620): Imrpove error handle
+	if err != nil {
+		return nil, err
+	}
+	params = signParams(&plurk.credential, "POST", uri, params)
+	res, err := http.PostForm(requestUri, params)
+	logger.Info("POST %s", uri.String())
+	logger.Debug("Params %s", params.Encode())
+	if err != nil {
+		return nil, err
+	}
+
+	defer res.Body.Close()
+	data, err := ioutil.ReadAll(res.Body)
+	if err != nil {
+		return nil, err
+	}
+
+	if res.StatusCode != 200 {
+		var responseError Error
+		json.Unmarshal(data, &responseError)
+		logger.Error(responseError.ErrorText)
+		return nil, errors.New(responseError.ErrorText)
+	}
+
+	return data, nil
 }
 
 // Helper to generate Pluck Instance
@@ -156,4 +183,8 @@ func (plurk *Plurk) Echo(data string) (Echo, error) {
 	json.Unmarshal(body, &echo)
 
 	return echo, nil
+}
+
+func (plurk *Plurk) GetTimeline() *Timeline {
+	return &Timeline{plurk}
 }

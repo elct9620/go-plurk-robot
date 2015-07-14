@@ -23,7 +23,7 @@ func Test_Info(t *testing.T) {
 	bufString := string(buffer.Bytes())
 	expectedString := "INFO: Hello World"
 
-	assert.Contains(t, bufString, expectedString)
+	assert.Contains(t, expectedString, bufString)
 }
 
 func Test_Error(t *testing.T) {
@@ -34,8 +34,8 @@ func Test_Error(t *testing.T) {
 	expectedString := "ERROR: Hello World"
 	expectedStyle := "\x1b[0;31m"
 
-	assert.Contains(t, bufString, expectedString)
-	assert.Contains(t, bufString, expectedStyle)
+	assert.Contains(t, expectedString, bufString)
+	assert.Contains(t, expectedStyle, bufString)
 }
 
 func Test_Warn(t *testing.T) {
@@ -46,8 +46,8 @@ func Test_Warn(t *testing.T) {
 	expectedString := "WARN: Hello World"
 	expectedStyle := "\x1b[0;33m"
 
-	assert.Contains(t, bufString, expectedString)
-	assert.Contains(t, bufString, expectedStyle)
+	assert.Contains(t, expectedString, bufString)
+	assert.Contains(t, expectedStyle, bufString)
 }
 
 func Test_Debug(t *testing.T) {
@@ -66,5 +66,5 @@ func Test_SetStyle(t *testing.T) {
 	bufString := Format("Style", "")
 	expectedStyle := "\x1b[1;31m"
 
-	assert.Contains(t, bufString, expectedStyle)
+	assert.Contains(t, expectedStyle, bufString)
 }

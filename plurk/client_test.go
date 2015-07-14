@@ -41,7 +41,7 @@ func Test_Signature(t *testing.T) {
 	signature := credential.Signature(uri, "GET", mockParams())
 
 	expectedSignature := "FEgaoJyXWYy3FBWYCog8NI63xRo="
-	assert.Equal(t, signature, expectedSignature)
+	assert.Equal(t, expectedSignature, signature)
 }
 
 func Test_Nonce(t *testing.T) {
@@ -60,14 +60,14 @@ func Test_SignParams(t *testing.T) {
 
 	expectedSignature := credential.Signature(uri, "GET", signedParams)
 
-	assert.Equal(t, signature, expectedSignature)
+	assert.Equal(t, expectedSignature, signature)
 }
 
 func Test_New(t *testing.T) {
 	plurk := New(credential.AppKey, credential.AppSecret, credential.Token, credential.TokenSecret)
 
-	assert.Equal(t, plurk.credential, credential)
-	assert.Equal(t, plurk.ApiBase, apiBase)
+	assert.Equal(t, credential, plurk.credential)
+	assert.Equal(t, apiBase, plurk.ApiBase)
 }
 
 func Test_PlurkGet(t *testing.T) {
@@ -85,7 +85,7 @@ func Test_PlurkGet(t *testing.T) {
 	var result map[string]string
 	json.Unmarshal(data, &result)
 
-	assert.Equal(t, result["message"], "message")
+	assert.Equal(t, "message", result["message"])
 }
 
 func Test_PlurkGetError(t *testing.T) {
@@ -102,7 +102,7 @@ func Test_PlurkGetError(t *testing.T) {
 	plurkClient := &Plurk{credential: credential, ApiBase: server.URL}
 	_, err := plurkClient.Get("/", make(url.Values))
 
-	assert.Equal(t, err.Error(), errorText)
+	assert.Equal(t, errorText, err.Error(), err.Error())
 }
 
 func Test_PlurkEcho(t *testing.T) {
@@ -120,6 +120,13 @@ func Test_PlurkEcho(t *testing.T) {
 	plurkClient := &Plurk{credential: credential, ApiBase: server.URL}
 	result, _ := plurkClient.Echo(requestData)
 
-	assert.Equal(t, result.Length, len(requestData))
-	assert.Equal(t, result.Data, requestData)
+	assert.Equal(t, len(requestData), result.Length)
+	assert.Equal(t, requestData, result.Data)
+}
+
+func Test_PlurkGetTimeline(t *testing.T) {
+	plurk := New(credential.AppKey, credential.AppSecret, credential.Token, credential.TokenSecret)
+	timeline := plurk.GetTimeline()
+
+	assert.Equal(t, plurk, timeline.Plurk)
 }
