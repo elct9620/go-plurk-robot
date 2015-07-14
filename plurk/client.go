@@ -39,6 +39,12 @@ type Error struct {
 	ErrorText string `json:"error_text"`
 }
 
+// Echo
+type Echo struct {
+	Length int
+	Data   string
+}
+
 // Signature from params and url to generate OAuth 1.0 signature
 func (c *Credential) Signature(uri *url.URL, method string, params url.Values) string {
 	// HMAC-SHA1
@@ -83,7 +89,7 @@ func signParams(token *Credential, method string, uri *url.URL, params url.Value
 }
 
 // Send GET Request to Plurk API
-func (plurk *Plurk) Get(endpoint string, params url.Values) (interface{}, error) {
+func (plurk *Plurk) Get(endpoint string, params url.Values) ([]byte, error) {
 
 	requestUri := fmt.Sprintf("%s/%s", plurk.ApiBase, endpoint)
 	uri, err := url.Parse(requestUri)
@@ -113,13 +119,7 @@ func (plurk *Plurk) Get(endpoint string, params url.Values) (interface{}, error)
 		return nil, errors.New(responseError.ErrorText)
 	}
 
-	var result interface{}
-	err = json.Unmarshal(data, &result)
-	if err != nil {
-		return nil, err
-	}
-
-	return result, nil
+	return data, nil
 }
 
 // Send POST Request to Plurk API
@@ -139,7 +139,7 @@ func New(AppKey string, AppSecret string, Token string, TokenSecret string) *Plu
 }
 
 // Echo, Plruk API which can return same data
-func (plurk *Plurk) Echo(data string) {
+func (plurk *Plurk) Echo(data string) (Echo, error) {
 	params := make(url.Values)
 
 	// If has data, add data as parameter
@@ -147,5 +147,13 @@ func (plurk *Plurk) Echo(data string) {
 		params.Set("data", data)
 	}
 
-	plurk.Get("echo", params)
+	body, err := plurk.Get("echo", params)
+	if err != nil {
+		return Echo{}, err
+	}
+
+	var echo Echo
+	json.Unmarshal(body, &echo)
+
+	return echo, nil
 }

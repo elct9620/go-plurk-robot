@@ -1,6 +1,7 @@
 package plurk
 
 import (
+	"encoding/json"
 	"fmt"
 	"net/http"
 	"net/http/httptest"
@@ -77,12 +78,38 @@ func Test_PlurkGet(t *testing.T) {
 	defer server.Close()
 
 	plurkClient := &Plurk{credential: credential, ApiBase: server.URL}
-	resultObject, _ := plurkClient.Get("/", make(url.Values))
+	data, _ := plurkClient.Get("/", make(url.Values))
 
-	result := resultObject.(map[string]interface{})
+	var result map[string]string
+	json.Unmarshal(data, &result)
 
 	if result["message"] != "message" {
 		t.Fatalf("Expected get JSON response with message, but got %#v", result)
+	}
+
+}
+
+func Test_PlurkEcho(t *testing.T) {
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(200)
+		w.Header().Set("Content-Type", "application/json")
+		data := r.URL.Query().Get("data")
+		fmt.Fprintf(w, "{\"length\": %d, \"data\": \"%s\"}", len(data), data)
+	}))
+
+	defer server.Close()
+
+	requestData := "Hello World"
+
+	plurkClient := &Plurk{credential: credential, ApiBase: server.URL}
+	result, _ := plurkClient.Echo(requestData)
+
+	if result.Length != len(requestData) {
+		t.Fatalf("Expected return length %d, but got %d", len(requestData), result.Length)
+	}
+
+	if result.Data != requestData {
+		t.Fatalf("Expected return data %s, but got %s", requestData, result.Data)
 	}
 
 }
