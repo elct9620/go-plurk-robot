@@ -14,6 +14,9 @@ type Plurk struct {
 	Qualifier           string
 	ResponseCount       int    `json:"response_count"`
 	NoComments          int    `json:"no_comments"`
-	Langauge            string `json:"lang"`
+	Language            string `json:"lang"`
 	Favorite            bool
+	FacebookDisabled    bool   `json:"facebook_disabled,omitempty"`
+	TwitterDisabled     bool   `json:"twitter_disabled,omitempty"`
+	LimitedTo           string `json:"limited_to"` // TODO(elct9620): Convert `LimitedTo` as a array
 }

@@ -13,24 +13,21 @@ type Timeline struct {
 	*PlurkClient
 }
 
-// PlurkAdd Response
-type PlurkAddResponse struct {
-	PlurkID             int `json:"plurk_id"`
-	Content             string
-	QualifierTranslated string `json:"qualifier_translated"`
-	Qualifier           string
-	Lang                string
-}
-
 // GetPlurkResponse
 type GetPlurkResponse struct {
 	Users  map[string]User `json:"plurk_users"`
 	Plurks []Plurk
 }
 
-func (t *Timeline) PlurkAdd(content string, qualifier string, limitTo []int, disableComment bool, language string) (*PlurkAddResponse, error) {
+func (t *Timeline) PlurkAdd(content string, qualifier string, limitTo []int, disableComment bool, language string, ignoreSocial bool) (*Plurk, error) {
 
 	params := make(url.Values)
+
+	if ignoreSocial {
+		// TODO(elct9620): Add ignore webio string
+		content = content + " !FB !TW"
+	}
+
 	params.Add("content", content)
 	params.Add("qualifier", qualifier)
 
@@ -48,7 +45,7 @@ func (t *Timeline) PlurkAdd(content string, qualifier string, limitTo []int, dis
 		return nil, err
 	}
 
-	var result PlurkAddResponse
+	var result Plurk
 	err = json.Unmarshal(data, &result)
 
 	if err != nil {
