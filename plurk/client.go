@@ -21,7 +21,7 @@ import (
 const apiBase = "http://www.plurk.com/APP"
 
 // API Instance
-type Plurk struct {
+type PlurkClient struct {
 	credential Credential
 	ApiBase    string
 }
@@ -88,8 +88,8 @@ func signParams(token *Credential, method string, uri *url.URL, params url.Value
 	return params
 }
 
-// Send GET Request to Plurk API
-func (plurk *Plurk) Get(endpoint string, params url.Values) ([]byte, error) {
+// Send GET Request to PlurkClient API
+func (plurk *PlurkClient) Get(endpoint string, params url.Values) ([]byte, error) {
 
 	requestUri := fmt.Sprintf("%s/%s", plurk.ApiBase, endpoint)
 	uri, err := url.Parse(requestUri)
@@ -122,8 +122,8 @@ func (plurk *Plurk) Get(endpoint string, params url.Values) ([]byte, error) {
 	return data, nil
 }
 
-// Send POST Request to Plurk API
-func (plurk *Plurk) Post(endpoint string, params url.Values) ([]byte, error) {
+// Send POST Request to PlurkClient API
+func (plurk *PlurkClient) Post(endpoint string, params url.Values) ([]byte, error) {
 	requestUri := fmt.Sprintf("%s/%s", plurk.ApiBase, endpoint)
 	uri, err := url.Parse(requestUri)
 	// TODO(elct9620): Imrpove error handle
@@ -155,18 +155,18 @@ func (plurk *Plurk) Post(endpoint string, params url.Values) ([]byte, error) {
 }
 
 // Helper to generate Pluck Instance
-func New(AppKey string, AppSecret string, Token string, TokenSecret string) *Plurk {
+func New(AppKey string, AppSecret string, Token string, TokenSecret string) *PlurkClient {
 	credential := Credential{
 		AppKey:      AppKey,
 		AppSecret:   AppSecret,
 		Token:       Token,
 		TokenSecret: TokenSecret,
 	}
-	return &Plurk{credential: credential, ApiBase: apiBase}
+	return &PlurkClient{credential: credential, ApiBase: apiBase}
 }
 
 // Echo, Plruk API which can return same data
-func (plurk *Plurk) Echo(data string) (Echo, error) {
+func (plurk *PlurkClient) Echo(data string) (Echo, error) {
 	params := make(url.Values)
 
 	// If has data, add data as parameter
@@ -185,6 +185,6 @@ func (plurk *Plurk) Echo(data string) (Echo, error) {
 	return echo, nil
 }
 
-func (plurk *Plurk) GetTimeline() *Timeline {
+func (plurk *PlurkClient) GetTimeline() *Timeline {
 	return &Timeline{plurk}
 }

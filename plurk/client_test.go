@@ -79,7 +79,7 @@ func Test_PlurkGet(t *testing.T) {
 
 	defer server.Close()
 
-	plurkClient := &Plurk{credential: credential, ApiBase: server.URL}
+	plurkClient := &PlurkClient{credential: credential, ApiBase: server.URL}
 	data, _ := plurkClient.Get("/", make(url.Values))
 
 	var result map[string]string
@@ -99,7 +99,7 @@ func Test_PlurkGetError(t *testing.T) {
 
 	defer server.Close()
 
-	plurkClient := &Plurk{credential: credential, ApiBase: server.URL}
+	plurkClient := &PlurkClient{credential: credential, ApiBase: server.URL}
 	_, err := plurkClient.Get("/", make(url.Values))
 
 	assert.Equal(t, errorText, err.Error(), err.Error())
@@ -117,7 +117,7 @@ func Test_PlurkEcho(t *testing.T) {
 
 	requestData := "Hello World"
 
-	plurkClient := &Plurk{credential: credential, ApiBase: server.URL}
+	plurkClient := &PlurkClient{credential: credential, ApiBase: server.URL}
 	result, _ := plurkClient.Echo(requestData)
 
 	assert.Equal(t, len(requestData), result.Length)
@@ -135,7 +135,7 @@ func Test_PlurkPost(t *testing.T) {
 
 	defer server.Close()
 
-	plurkClient := &Plurk{credential: credential, ApiBase: server.URL}
+	plurkClient := &PlurkClient{credential: credential, ApiBase: server.URL}
 	params := make(url.Values)
 	params.Add("data", postData)
 	data, _ := plurkClient.Post("/", params)
@@ -157,7 +157,7 @@ func Test_PlurkPostError(t *testing.T) {
 
 	defer server.Close()
 
-	plurkClient := &Plurk{credential: credential, ApiBase: server.URL}
+	plurkClient := &PlurkClient{credential: credential, ApiBase: server.URL}
 	_, err := plurkClient.Post("/", make(url.Values))
 
 	assert.Equal(t, errorText, err.Error(), err.Error())
@@ -167,5 +167,5 @@ func Test_PlurkGetTimeline(t *testing.T) {
 	plurk := New(credential.AppKey, credential.AppSecret, credential.Token, credential.TokenSecret)
 	timeline := plurk.GetTimeline()
 
-	assert.Equal(t, plurk, timeline.Plurk)
+	assert.Equal(t, plurk, timeline.PlurkClient)
 }
