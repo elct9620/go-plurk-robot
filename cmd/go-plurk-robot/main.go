@@ -45,6 +45,12 @@ func main() {
 	Token = os.Getenv("PLURK_OAUTH_TOKEN")
 	TokenSecret = os.Getenv("PLURK_OAUTH_SECRET")
 
+	// Try get robot name from environment
+	RobotName = os.Getenv("PLURK_ROBOT_NAME")
+	if len(RobotName) <= 0 {
+		RobotName = "Plurk Robot"
+	}
+
 	rootCmd := &cobra.Command{
 		Use:              "app",
 		PersistentPreRun: setupClient,
@@ -58,6 +64,8 @@ func main() {
 	rootCmd.PersistentFlags().StringVar(&AppSecret, "app_secret", AppSecret, "The plurk app secret, suggest use environment variable")
 	rootCmd.PersistentFlags().StringVar(&Token, "oauth_token", Token, "The plurk user oauth token, suggest use environment variable")
 	rootCmd.PersistentFlags().StringVar(&TokenSecret, "oauth_secret", TokenSecret, "The plurk oauth secret token, suggest use environment variable")
-	// Pre run hook
+	// Prepare Sub-Command Flags
+	setupCommandFlags()
+	// Ready!
 	rootCmd.Execute()
 }

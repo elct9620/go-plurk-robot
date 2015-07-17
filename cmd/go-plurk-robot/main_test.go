@@ -21,6 +21,7 @@ func Test_SetupLogger(t *testing.T) {
 }
 
 func Test_SetupClient(t *testing.T) {
+	Client = nil
 	// Default client should nil
 	assert.Nil(t, Client)
 

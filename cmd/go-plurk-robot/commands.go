@@ -1,17 +1,41 @@
 package main
 
 import (
+	"github.com/elct9620/go-plurk-robot/logger"
 	"github.com/spf13/cobra"
+	"strings"
 )
+
+func setupCommandFlags() {
+	// Add Plurk
+	cmdAddPlurk.Flags().StringP("lang", "L", "en", "Specify this plurk language")
+	cmdAddPlurk.Flags().StringP("qualifier", "q", ":", "Spacify plurk qualifier, Ex. says, think")
+}
 
 // A shortcut for Add Plurk, can use with cronjob
 var cmdAddPlurk = &cobra.Command{
 	Use:   "plurk content [qualifier]",
 	Short: "Add a new plruk",
 	Long:  `Add a new plurk to your robot timeline`,
-	Run: func(cmd *cobra.Command, args []string) {
+	Run:   addPlurk,
+}
 
-	},
+// Add Plurk Implement
+func addPlurk(cmd *cobra.Command, args []string) {
+	if len(args) > 0 {
+		lang, _ := cmd.Flags().GetString("lang")
+		qualifier, _ := cmd.Flags().GetString("qualifier")
+
+		timeline := Client.GetTimeline()
+		res, err := timeline.PlurkAdd(strings.Join(args, " "), qualifier, make([]int, 0), false, lang, true)
+		if err != nil {
+			logger.FError(cmd.Out(), err.Error())
+			return
+		}
+		logger.FInfo(cmd.Out(), "Success, Plurk ID: %d", res.PlurkID)
+	} else {
+		logger.FError(cmd.Out(), "No plurk content specified")
+	}
 }
 
 // A shortcut for Add Response, can use with cronjob
