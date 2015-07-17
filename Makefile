@@ -19,3 +19,7 @@ cov-annoate: coverage
 
 report: coverage
 	gocov convert go-plurk-robot.cov | gocov-html > report.html
+
+clean:
+	rm go-plurk-robot.cov
+	rm report.html
