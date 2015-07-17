@@ -60,16 +60,31 @@ func Info(message string, v ...interface{}) {
 	l.Println(Format("Info", message, v...))
 }
 
+func FInfo(output io.Writer, message string, v ...interface{}) {
+	SetStyle(Normal, NoColor)
+	fmt.Fprintln(output, Format("Info", message, v...))
+}
+
 // Warn
 func Warn(message string, v ...interface{}) {
 	SetStyle(Normal, Yellow)
 	l.Println(Format("Warn", message, v...))
 }
 
+func FWarn(output io.Writer, message string, v ...interface{}) {
+	SetStyle(Normal, Yellow)
+	fmt.Fprintln(output, Format("Warn", message, v...))
+}
+
 // Error
 func Error(message string, v ...interface{}) {
 	SetStyle(Normal, Red)
 	l.Println(Format("Error", message, v...))
+}
+
+func FError(output io.Writer, message string, v ...interface{}) {
+	SetStyle(Normal, Red)
+	fmt.Fprintln(output, Format("Error", message, v...))
 }
 
 // Format Output String
