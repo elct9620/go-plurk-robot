@@ -8,6 +8,10 @@ import (
 	"testing"
 )
 
+func Test_Main(t *testing.T) {
+	main() // Do noting, just hit it
+}
+
 func Test_SetupLogger(t *testing.T) {
 	buffer := bytes.NewBuffer(make([]byte, 0))
 	LogFile = buffer

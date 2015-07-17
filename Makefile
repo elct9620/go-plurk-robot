@@ -11,8 +11,12 @@ build:
 test:
 	go test ./...
 
+# Merge profile
 coverage:
 	go test -covermode count -coverprofile go-plurk-robot.cov -coverpkg $(PKGS) $(MAIN_PKG)
+	go test -covermode count -coverprofile profile.tmp $(CMD_PKG)
+	cat profile.tmp | tail -n +2 >> go-plurk-robot.cov
+	rm -f profile.tmp
 
 cov-annoate: coverage
 	gocov convert go-plurk-robot.cov | gocov annotate -
