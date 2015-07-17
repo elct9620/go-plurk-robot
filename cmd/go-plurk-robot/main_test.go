@@ -3,6 +3,7 @@ package main
 import (
 	"bytes"
 	"github.com/elct9620/go-plurk-robot/logger"
+	"github.com/spf13/cobra"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )
@@ -17,4 +18,19 @@ func Test_SetupLogger(t *testing.T) {
 
 	// Validate logger wirte into buffer and conatains spacify robot name
 	assert.Contains(t, buffer.String(), RobotName)
+}
+
+func Test_SetupClient(t *testing.T) {
+	// Default client should nil
+	assert.Nil(t, Client)
+
+	// Client should be setup after setup
+	setupClient(&cobra.Command{}, make([]string, 0))
+	assert.NotNil(t, Client)
+
+	// Client should not changed after first time setup
+	oldClient := Client
+	AppKey = "Test"
+	setupClient(&cobra.Command{}, make([]string, 0))
+	assert.Equal(t, oldClient, Client)
 }

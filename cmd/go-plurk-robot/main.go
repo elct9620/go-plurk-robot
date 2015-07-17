@@ -16,6 +16,7 @@ var (
 	RobotName   string    = "Plurk Robot" // Robot Name
 	LogFile     io.Writer = os.Stdout     // Robot default out message to STDOUT
 	LogFileName string    = ""
+	Client      *plurk.PlurkClient
 )
 
 func setupLogger() {
@@ -30,6 +31,13 @@ func setupLogger() {
 	logger.Config(LogFile, RobotName)
 }
 
+func setupClient(cmd *cobra.Command, args []string) {
+	setupLogger()
+	if Client == nil {
+		Client = plurk.New(AppKey, AppSecret, Token, TokenSecret)
+	}
+}
+
 func main() {
 	// Try load credential from environment variable
 	AppKey = os.Getenv("PLURK_APP_KEY")
@@ -37,15 +45,19 @@ func main() {
 	Token = os.Getenv("PLURK_OAUTH_TOKEN")
 	TokenSecret = os.Getenv("PLURK_OAUTH_SECRET")
 
-	plurk.New(AppKey, AppSecret, Token, TokenSecret)
-
-	rootCmd := &cobra.Command{Use: "app"}
+	rootCmd := &cobra.Command{
+		Use:              "app",
+		PersistentPreRun: setupClient,
+	}
 	// Add Commands
 	rootCmd.AddCommand(cmdAddPlurk, cmdAddResponse, cmdServe, cmdRobot)
 	// Setup Flags
 	rootCmd.PersistentFlags().StringVarP(&RobotName, "name", "n", RobotName, "The robot name")
 	rootCmd.PersistentFlags().StringVarP(&LogFileName, "log", "l", "", "The logfile path, default is STDOUT")
+	rootCmd.PersistentFlags().StringVar(&AppKey, "app_key", AppKey, "The plurk app key, suggest use environment variable")
+	rootCmd.PersistentFlags().StringVar(&AppSecret, "app_secret", AppSecret, "The plurk app secret, suggest use environment variable")
+	rootCmd.PersistentFlags().StringVar(&Token, "oauth_token", Token, "The plurk user oauth token, suggest use environment variable")
+	rootCmd.PersistentFlags().StringVar(&TokenSecret, "oauth_secret", TokenSecret, "The plurk oauth secret token, suggest use environment variable")
+	// Pre run hook
 	rootCmd.Execute()
-
-	setupLogger()
 }
