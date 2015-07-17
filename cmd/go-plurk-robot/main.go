@@ -25,15 +25,9 @@ func main() {
 	echo, _ := client.Echo("Hello World?")
 	logger.Info("Echo: %s", echo.Data)
 
-	timeline := client.GetTimeline()
+	responses := client.GetResponses()
+	res, _ := responses.ResponseAdd(1275557359, "回噗測試 #蒼時機器人", "says")
 
-	/*
-		_, err := timeline.PlurkAdd("發噗測試 #蒼時機器人", "says", make([]int, 0), false, "tr_ch")
-		if err != nil {
-			logger.Error("Error plurk add %s", err.Error())
-		}
-	*/
-	res, _ := timeline.GetPlurks(0, 1, "")
-	//	logger.Info("Plurks %#v", res)
-	logger.Info("User Information: %#v", res.Plurks)
+	logger.Info("Response %#v", res)
+
 }
