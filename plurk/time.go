@@ -8,7 +8,7 @@ type Time struct {
 }
 
 const timeLayout = "Mon, 02 Jan 2006 15:04:05 MST"
-const pollingTimeLayout = "2006-1-2T15:04:05"
+const pollingTimeLayout = "2006-1-2T15:04:05 MST"
 
 func (t *Time) UnmarshalJSON(b []byte) (err error) {
 	// Trim " char
@@ -24,5 +24,5 @@ func Now() *Time {
 }
 
 func (t *Time) PollingOffset() string {
-	return t.Format(pollingTimeLayout)
+	return t.UTC().Format(pollingTimeLayout)
 }

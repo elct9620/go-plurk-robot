@@ -27,7 +27,7 @@ func Test_Now(t *testing.T) {
 func Test_PollingOffset(t *testing.T) {
 	originTime, _ := time.Parse(timeLayout, "Fri, 17 Jul 2015 03:54:02 GMT")
 	expectedDate := &Time{originTime}
-	expectedPollingOffset := "2015-7-17T03:54:02"
+	expectedPollingOffset := "2015-7-17T03:54:02 UTC"
 
 	assert.Equal(t, expectedPollingOffset, expectedDate.PollingOffset())
 }

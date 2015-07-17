@@ -6,8 +6,8 @@ type Plurk struct {
 	RawContent          string `json:"content_raw"`
 	OwnerID             int    `json:"owner_id"`
 	Replurked           bool
-	ReplurkerID         int `json:"replurker_id"`
-	Posted              Time
+	ReplurkerID         int   `json:"replurker_id"`
+	Posted              *Time `json:"omitempty"`
 	Anonymous           bool
 	PlurkType           int    `json:"plurk_type"`
 	QualifierTranslated string `json:"qualifier_translated"`

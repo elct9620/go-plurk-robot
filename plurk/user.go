@@ -20,5 +20,5 @@ type User struct {
 	NameColor       string `json:"name_color"`
 	Timezone        string
 	Avatar          int
-	Birthday        Time `json:"date_of_birth"`
+	Birthday        *Time `json:"date_of_birth,omitempty"`
 }

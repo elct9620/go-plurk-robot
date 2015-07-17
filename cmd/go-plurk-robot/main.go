@@ -25,9 +25,13 @@ func main() {
 	echo, _ := client.Echo("Hello World?")
 	logger.Info("Echo: %s", echo.Data)
 
-	responses := client.GetResponses()
-	res, _ := responses.ResponseAdd(1275557359, "回噗測試 #蒼時機器人", "says")
+	polling := client.GetPolling()
+	plurks, err := polling.GetPlurks(plurk.Now(), 20)
 
-	logger.Info("Response %#v", res)
+	if err != nil {
+		logger.Error("Error: %s", err.Error())
+	}
+
+	logger.Info("New plurks %#v", plurks)
 
 }
