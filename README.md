@@ -5,3 +5,7 @@
 [![wercker status](https://app.wercker.com/status/f6b3c29f0fdfb254d486cd8667eefc6f/m "wercker status")](https://app.wercker.com/project/bykey/f6b3c29f0fdfb254d486cd8667eefc6f)
 
 不到半個月就要進去國軍 Online 為了安撫寂寞的網友只好上了！
+
+
+[![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/elct9620/go-plurk-robot/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
+
