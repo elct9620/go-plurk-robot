@@ -3,13 +3,17 @@ package main
 import (
 	"github.com/elct9620/go-plurk-robot/logger"
 	"github.com/spf13/cobra"
+	"strconv"
 	"strings"
 )
 
 func setupCommandFlags() {
 	// Add Plurk
 	cmdAddPlurk.Flags().StringP("lang", "L", "en", "Specify this plurk language")
-	cmdAddPlurk.Flags().StringP("qualifier", "q", ":", "Spacify plurk qualifier, Ex. says, think")
+	cmdAddPlurk.Flags().StringP("qualifier", "q", ":", "Spacify plurk qualifier, Ex. says, thinks")
+
+	// Add Response
+	cmdAddResponse.Flags().StringP("qualifier", "q", ":", "Specify plurk qualifier, Ex. says, thinks")
 }
 
 // A shortcut for Add Plurk, can use with cronjob
@@ -43,9 +47,31 @@ var cmdAddResponse = &cobra.Command{
 	Use:   "response id content [quailfier]",
 	Short: "Response to specify plurk",
 	Long:  `Add a new response to specify plurk on timeline`,
-	Run: func(cmd *cobra.Command, args []string) {
+	Run:   addResponse,
+}
 
-	},
+func addResponse(cmd *cobra.Command, args []string) {
+	if len(args) > 1 {
+		plurkID, err := strconv.Atoi(args[0:1][0])
+		responseContent := args[1:]
+		qualifier, _ := cmd.Flags().GetString("qualifier")
+
+		if err != nil {
+			logger.FError(cmd.Out(), "Convert plurk id error, reason: %s", err.Error())
+			return
+		}
+
+		response := Client.GetResponses()
+		res, err := response.ResponseAdd(plurkID, strings.Join(responseContent, " "), qualifier)
+
+		if err != nil {
+			logger.FError(cmd.Out(), err.Error())
+		} else {
+			logger.FInfo(cmd.Out(), "Respons success add to %d, and response id is %d", plurkID, res.Id)
+		}
+	} else {
+		logger.FError(cmd.Out(), "No plurk id or response content specified")
+	}
 }
 
 // A helpful web ui for manage the robots
