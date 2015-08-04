@@ -57,7 +57,7 @@ func buildResponseAddServer(responseFile string) *httptest.Server {
 
 func Test_AddPlurkCommand(t *testing.T) {
 
-	testPath := "test/plurk_add_response.json"
+	testPath := "test/plurk_add.json"
 	server := buildPlurkAddServer(testPath)
 	defer server.Close()
 
@@ -73,7 +73,7 @@ func Test_AddPlurkCommand(t *testing.T) {
 
 func Test_AddPlurkCommandWithoutContent(t *testing.T) {
 
-	testPath := "test/plurk_add_response.json"
+	testPath := "test/plurk_add.json"
 	server := buildPlurkAddServer(testPath)
 	defer server.Close()
 

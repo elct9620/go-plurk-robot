@@ -34,7 +34,7 @@ func buildPlurkAddServer(responseFile string) *httptest.Server {
 
 func Test_PlurkAdd(t *testing.T) {
 
-	testPath := "test/plurk_add_response.json"
+	testPath := "test/plurk_add.json"
 
 	expectedContent := "Hello World"
 	expectedLanguage := "en"
@@ -54,7 +54,7 @@ func Test_PlurkAdd(t *testing.T) {
 
 func Test_PlurkAddIgnoreSocial(t *testing.T) {
 
-	testPath := "test/plurk_add_response.json"
+	testPath := "test/plurk_add.json"
 
 	expectedContent := "Hello World"
 	expectedLanguage := "en"
