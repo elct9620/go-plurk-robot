@@ -25,3 +25,18 @@ func TestSetupSignal(t *testing.T) {
 
 	r.Signal <- syscall.SIGTERM
 }
+
+func TestHandleSignal(t *testing.T) {
+	robot := New()
+	robot.cron.Start()
+	exit := robot.HandleSignal(syscall.SIGTERM)
+	assert.True(t, exit)
+
+	robot.cron.Start()
+	exit = robot.HandleSignal(syscall.SIGINT)
+	assert.True(t, exit)
+
+	robot.cron.Start()
+	exit = robot.HandleSignal(syscall.SIGKILL)
+	assert.True(t, exit)
+}
