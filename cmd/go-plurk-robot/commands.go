@@ -2,6 +2,7 @@ package main
 
 import (
 	"github.com/elct9620/go-plurk-robot/logger"
+	"github.com/elct9620/go-plurk-robot/robot"
 	"github.com/spf13/cobra"
 	"strconv"
 	"strings"
@@ -90,6 +91,7 @@ var cmdRobot = &cobra.Command{
 	Short: "Start a robot",
 	Long:  `Start a robot with task can automatic add plurk/response and other things`,
 	Run: func(cmd *cobra.Command, args []string) {
-
+		r := robot.New()
+		r.Start()
 	},
 }
