@@ -7,16 +7,23 @@ import (
 )
 
 func TestOpenSession(t *testing.T) {
-	session, _ := OpenSession("mongodb:///dev-test")
+	db := os.Getenv("MONGODB_URL")
+	if len(db) <= 0 {
+		db = "mongodb:///"
+	}
+	session, _ := OpenSession(db)
 
 	// Test database connect working, and open specify database
-	assert.Equal(t, "dev-test", session.DB("").Name)
+	assert.Equal(t, "test", session.DB("").Name)
 }
 
 func Test_OpenSessionUsingEnv(t *testing.T) {
-	os.Setenv("MONGODB_URL", "MONGO_URL")
-	os.Setenv("MONGO_URL", "mongodb:///dev-test")
+	db := os.Getenv("MONGODB_URL")
+	if len(db) <= 0 {
+		os.Setenv("MONGODB_URL", "MONGO_URL")
+		os.Setenv("MONGO_URL", "mongodb:///test")
+	}
 	session, _ := OpenSession("")
 
-	assert.Equal(t, "dev-test", session.DB("").Name)
+	assert.Equal(t, "test", session.DB("").Name)
 }
