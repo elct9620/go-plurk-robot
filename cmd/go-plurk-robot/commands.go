@@ -92,6 +92,8 @@ var cmdRobot = &cobra.Command{
 	Long:  `Start a robot with task can automatic add plurk/response and other things`,
 	Run: func(cmd *cobra.Command, args []string) {
 		r := robot.New()
-		r.Start()
+		if r != nil {
+			r.Start()
+		}
 	},
 }

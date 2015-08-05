@@ -40,3 +40,13 @@ func TestHandleSignal(t *testing.T) {
 	exit = robot.HandleSignal(syscall.SIGKILL)
 	assert.True(t, exit)
 }
+
+func TestGenerateJobScript(t *testing.T) {
+	jobName := GenerateJobScript("Example", "")
+	assert.Equal(t, "Job_Example", jobName)
+}
+
+func TestGenerateTaskScript(t *testing.T) {
+	taskName := GenerateTaskScript("Example", "")
+	assert.Equal(t, "Task_Example", taskName)
+}
