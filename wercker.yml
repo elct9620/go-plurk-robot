@@ -14,8 +14,9 @@ services:
     # - postgres
     # http://devcenter.wercker.com/docs/services/postgresql.html
 
-  - id: mongo
+    # - id: mongo
     # http://devcenter.wercker.com/docs/services/mongodb.html
+  - wercker/mongodb
 build:
   # The steps that will be executed on build
   # Steps make up the actions in your pipeline
