@@ -39,12 +39,6 @@ build:
         code: |
           go build ./...
 
-    # Setup environment variable
-    - script:
-      name: setup environment
-      code: |
-        export MONGODB_URL=mongodb://${MONGO_PORT_27017_TCP_ADDR}:${MONGO_PORT}/
-
     # Test the project
     - script:
         name: go test
