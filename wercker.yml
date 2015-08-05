@@ -43,5 +43,4 @@ build:
     - script:
         name: go test
         code: |
-          env
-          MONGODB_URL=$MONGO_PORT_27017_TCP_ADDR:$MONGO_PORT_27017_TCP_PORT go test ./...
+          go test ./...
