@@ -14,9 +14,8 @@ services:
     # - postgres
     # http://devcenter.wercker.com/docs/services/postgresql.html
 
-    # - id: mongo
+    - id: mongo
     # http://devcenter.wercker.com/docs/services/mongodb.html
-  - wercker/mongodb
 build:
   # The steps that will be executed on build
   # Steps make up the actions in your pipeline
@@ -44,4 +43,4 @@ build:
     - script:
         name: go test
         code: |
-          go test ./...
+          MONGODB_URL=$MONGO_PORT_27017_TCP_ADDR:$MONGO_PORT_27017_TCP_PORT go test ./...
