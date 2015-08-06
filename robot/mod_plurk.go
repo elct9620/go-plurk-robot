@@ -17,6 +17,7 @@ func plurkModuleLoader(vm *motto.Motto) (otto.Value, error) {
 
 	// Set module functions
 	module.Set("addPlurk", plurk_AddPlurk)
+	module.Set("addResponse", plurk_AddResponse)
 
 	return vm.ToValue(module)
 }
@@ -50,6 +51,39 @@ func plurk_AddPlurk(call otto.FunctionCall) otto.Value {
 	}
 
 	logger.Info("New plurk added, content is %s", res.RawContent)
+
+	return otto.TrueValue()
+}
+
+// Add Response API
+func plurk_AddResponse(call otto.FunctionCall) otto.Value {
+
+	plurkID, _ := call.Argument(0).ToInteger()
+	message, _ := call.Argument(1).ToString()
+	qualifier, _ := call.Argument(2).ToString()
+
+	if plurkID == 0 {
+		logger.Error("Plurk ID not specify, add response failed!")
+		return otto.FalseValue()
+	}
+
+	if len(message) <= 0 || message == "undefined" {
+		logger.Error("No plurk content specify, add response failed!")
+		return otto.FalseValue()
+	}
+
+	if qualifier == "undefined" {
+		qualifier = ":"
+	}
+
+	responses := client.GetResponses()
+	res, err := responses.ResponseAdd(int(plurkID), message, qualifier)
+
+	if err != nil {
+		logger.Error("Add response failed, because %s", err.Error())
+	}
+
+	logger.Info("Add response success, content is %s", res.RawContent)
 
 	return otto.TrueValue()
 }
