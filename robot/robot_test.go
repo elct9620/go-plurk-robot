@@ -1,10 +1,18 @@
 package robot
 
 import (
+	"github.com/elct9620/go-plurk-robot/plurk"
 	"github.com/stretchr/testify/assert"
 	"syscall"
 	"testing"
 )
+
+func TestSetupPlurk(t *testing.T) {
+	clientExpect := plurk.New("A", "B", "C", "D")
+	SetupPlurk("A", "B", "C", "D")
+
+	assert.Equal(t, clientExpect, client)
+}
 
 func TestNew(t *testing.T) {
 	robot := New()
