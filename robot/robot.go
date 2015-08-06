@@ -4,6 +4,7 @@ import (
 	"github.com/ddliu/motto"
 	"github.com/elct9620/go-plurk-robot/db"
 	"github.com/elct9620/go-plurk-robot/logger"
+	"github.com/elct9620/go-plurk-robot/plurk"
 	"github.com/robertkrimen/otto"
 	"github.com/robfig/cron"
 	"gopkg.in/mgo.v2"
@@ -15,7 +16,22 @@ import (
 type Robot struct {
 	cron   *cron.Cron
 	db     *mgo.Database
+	client *plurk.PlurkClient
 	Signal chan os.Signal
+}
+
+var client *plurk.PlurkClient
+
+// Initialize package
+func init() {
+
+	// Setup motto module
+	motto.AddModule("plurk", plurkModuleLoader)
+}
+
+// Setup plurk client to using plurk feature
+func SetupPlurk(AppKey string, AppSecret string, Token string, TokenSecret string) {
+	client = plurk.New(AppKey, AppSecret, Token, TokenSecret)
 }
 
 // Create a new robot instance
@@ -56,6 +72,7 @@ func (r *Robot) LoadCronJobs() {
 	// Read all jobs and throw into motto vm to run script
 	for jobsIt.Next(&job) {
 		jobName := GenerateJobScript(job.Name, job.Script)
+		logger.Info("Add new job: %s", job.Name)
 		r.cron.AddFunc(job.Schedule, func() {
 			motto.Run(jobName)
 		})
