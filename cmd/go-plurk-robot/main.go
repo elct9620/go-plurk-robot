@@ -17,6 +17,7 @@ var (
 	LogFile     io.Writer = os.Stdout     // Robot default out message to STDOUT
 	LogFileName string    = ""
 	Client      *plurk.PlurkClient
+	Port        string
 )
 
 func setupLogger() {
@@ -44,6 +45,7 @@ func main() {
 	AppSecret = os.Getenv("PLURK_APP_SECRET")
 	Token = os.Getenv("PLURK_OAUTH_TOKEN")
 	TokenSecret = os.Getenv("PLURK_OAUTH_SECRET")
+	Port = os.Getenv("PORT")
 
 	// Try get robot name from environment
 	RobotName = os.Getenv("PLURK_ROBOT_NAME")
