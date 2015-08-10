@@ -22,3 +22,7 @@ body {
   width: 340px;
   transform: translateX(-350px);
 }
+
+.table-center {
+  margin: 0 auto;
+}

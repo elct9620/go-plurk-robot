@@ -87,6 +87,8 @@ func setupRoute(s *echo.Echo) {
 	s.Get("/", index)
 	s.Get("/login", login)
 	s.Post("/login", verifyLogin)
+
+	s.Get("/jobs", jobs)
 }
 
 func index(c *echo.Context) error {

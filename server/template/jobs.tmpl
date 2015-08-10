@@ -1,0 +1,28 @@
+{{ define "jobs" }}
+
+{{ template "_common/header" . }}
+
+<div class="mdl-grid">
+  <div class="mdl-cell mdl-cell--2-col"></div>
+  <div class="mdl-cell mdl-cell--8-col">
+    <table class="mdl-data-table mdl-js-data-table mdl-shadow--2dp table-center">
+      <thead>
+        <tr>
+          <th class="mdl-data-table__cell--non-numberic">Name</th>
+          <th class="mdl-data-table__cell--non-numberic">Schedule</th>
+        </tr>
+      </thead>
+      {{ range .Jobs }}
+      <tr>
+        <td class="mdl-data-table__cell--non-numberic">{{ .Name }}</td>
+        <td class="mdl-data-table__cell--non-numberic">{{ .Schedule }}</td>
+      </tr>
+      {{ end }}
+    </table>
+  </div>
+  <div class="mdl-cell mdl-cell--2-col"></div>
+</div>
+
+{{ template "_common/footer" . }}
+
+{{ end }}
