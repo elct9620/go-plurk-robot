@@ -1,0 +1,26 @@
+{{ define "_common/navigation" }}
+
+{{ if .HideNav }}
+{{ else }}
+<header class="layout-transparent mdl-layout__header mdl-layout__header--transparent">
+  <div class="mdl-layout__header-row">
+    <!-- Title -->
+    <span class="mdl-layout-title">GoPlurk AdminPanel</span>
+    <div class="mdl-layout-spacer"></div>
+    <!-- Navigation -->
+    <nav class="mdl-navigation">
+      <a class="mdl-navigation__link" href="/jobs">Jobs</a>
+      <a class="mdl-navigation__link" href="/tasks">Tasks</a>
+    </nav>
+  </div>
+</header>
+<div class="mdl-layout__drawer layout-drawer">
+  <span class="mdl-layout-title">GoPlurk AdminPanel</span>
+  <nav class="mdl-navigation">
+    <a class="mdl-navigation__link" href="/jobs">Jobs</a>
+    <a class="mdl-navigation__link" href="/tasks">Tasks</a>
+  </nav>
+</div>
+{{ end }}
+
+{{ end }}

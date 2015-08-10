@@ -17,11 +17,11 @@ var (
 	cookie *sessions.CookieStore
 )
 
-type Template struct {
+type Renderer struct {
 	templates *template.Template
 }
 
-func (t *Template) Render(w io.Writer, name string, data interface{}) error {
+func (t *Renderer) Render(w io.Writer, name string, data interface{}) error {
 	return t.templates.ExecuteTemplate(w, name, data)
 }
 
@@ -63,13 +63,13 @@ func Serve(Port string) {
 	gracehttp.Serve(server.Server(":" + Port))
 }
 
-func getRenderer() *Template {
+func getRenderer() *Renderer {
 	// Get correctly path to template file
 	_, filename, _, _ := runtime.Caller(1)
 	tmplPath := filepath.Dir(filename)
 	templates := template.Must(template.ParseGlob(tmplPath + "/template/*.tmpl"))
 	templates.ParseGlob(tmplPath + "/template/*/*.tmpl")
-	return &Template{
+	return &Renderer{
 		templates: templates,
 	}
 }
@@ -80,6 +80,7 @@ func setupStatic(server *echo.Echo) {
 	server.Static("/js", packagePath+"/static/js")
 	server.Static("/css", packagePath+"/static/css")
 	server.Static("/vendor", packagePath+"/static/vendor")
+	server.Static("/img", packagePath+"/static/img")
 }
 
 func setupRoute(s *echo.Echo) {

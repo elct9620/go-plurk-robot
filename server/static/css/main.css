@@ -4,4 +4,21 @@ body {
 
 #login-form {
   margin: 0 auto;
+  margin-top: 10em;
+}
+
+#login-form > .mdl-card__title {
+  color: #fff;
+  height: 168px;
+  background: url('/img/login.jpg') center / cover;
+}
+
+.layout-transparent {
+  min-height: 200px;
+  background: url('/img/transparent.jpg') center / cover;
+}
+
+.layout-drawer {
+  width: 340px;
+  transform: translateX(-350px);
 }
