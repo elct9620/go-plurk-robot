@@ -1,11 +1,23 @@
+<!-- Job List -->
 {{ define "jobs" }}
 
 {{ template "_common/header" . }}
 
 <div class="mdl-grid">
   <div class="mdl-cell mdl-cell--2-col"></div>
+  <div class="mdl-cell mdl-cell--8-col align-right">
+    <a href="/jobs/new" class="mdl-button mdl-js-button mdl-button--fab mdl-button--colored">
+      <i class="material-icons">add</i>
+    </a>
+  </div>
+  <div class="mdl-cell mdl-cell--2-col"></div>
+</div>
+
+
+<div class="mdl-grid">
+  <div class="mdl-cell mdl-cell--2-col"></div>
   <div class="mdl-cell mdl-cell--8-col">
-    <table class="mdl-data-table mdl-js-data-table mdl-shadow--2dp table-center">
+    <table class="mdl-data-table mdl-js-data-table mdl-shadow--2dp mdl-data-table--selectable table-center">
       <thead>
         <tr>
           <th class="mdl-data-table__cell--non-numberic">Name</th>
@@ -14,7 +26,7 @@
       </thead>
       {{ range .Jobs }}
       <tr>
-        <td class="mdl-data-table__cell--non-numberic">{{ .Name }}</td>
+        <td class="mdl-data-table__cell--non-numberic"><a href="/job/{{ .Id.Hex }}">{{ .Name }}</a></td>
         <td class="mdl-data-table__cell--non-numberic">{{ .Schedule }}</td>
       </tr>
       {{ end }}
@@ -22,6 +34,161 @@
   </div>
   <div class="mdl-cell mdl-cell--2-col"></div>
 </div>
+
+{{ template "_common/footer" . }}
+
+{{ end }}
+
+<!-- Single Job Page -->
+
+{{ define "job" }}
+
+{{ template "_common/header" . }}
+
+<form method="post" id="job">
+  <div class="mdl-grid">
+    <div class="mdl-cell mdl-cell--4-col">
+
+      <!-- Name -->
+      <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+        <input class="mdl-textfield__input" type="text" id="name" name="name" value="{{ .Job.Name }}"/>
+        <label class="mdl-textfield__label" for="name">Name</label>
+      </div>
+
+      <!-- Schedule -->
+      <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+        <input class="mdl-textfield__input" type="text" id="schedule" name="schedule" value="{{ .Job.Schedule }}"/>
+        <label class="mdl-textfield__label" for="Schedule">Schedule</label>
+      </div>
+
+    </div>
+    <div class="mdl-cell mdl-cell--8-col">
+
+      <!-- Script -->
+      <div id="script" class="script-editor">{{ .Job.Script }}</div>
+
+    </div>
+  </div>
+  <div class="mdl-grid">
+    <div class="mdl-cell mdl-cell--12-col">
+      <button type="submit" class="mdl-button mdl-js-button mdl-button--primary">Update</button>
+    </div>
+  </div>
+</form>
+
+{{/* TODO(elct9620): Below shoul split using block style */}}
+<script>
+  window.onload = function() {
+    // Setup Job Script Editor
+    var editor = ace.edit("script")
+    editor.setTheme("ace/theme/solarized_dark")
+    editor.getSession().setMode("ace/mode/javascript")
+    editor.setFontSize(14)
+
+    var jobName, jobSchedule, jobScript
+    // Handle Form using Ajax
+    var jobForm = document.getElementById("job")
+    jobForm.onsubmit = function(e) {
+      e.preventDefault()
+
+      jobName = this.name.value
+      jobSchedule = this.schedule.value
+      jobScript = editor.getValue()
+
+      promise.put("/job/{{ .Id.Hex }}", {
+        name: jobName,
+        schedule: jobSchedule,
+        script: jobScript
+      }).then(function(err, result, xhr) {
+        if(err) {
+          return alert("Something wrong, please retry later...")
+        }
+        // Simple do redirect
+        location.href = "/jobs"
+      })
+
+
+      return 0
+    }
+  }
+</script>
+
+{{ template "_common/footer" . }}
+
+{{ end }}
+
+<!-- New Job Page -->
+
+{{ define "newJob" }}
+
+{{ template "_common/header" . }}
+
+<form method="post" id="job">
+  <div class="mdl-grid">
+    <div class="mdl-cell mdl-cell--4-col">
+
+      <!-- Name -->
+      <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+        <input class="mdl-textfield__input" type="text" id="name" name="name"/>
+        <label class="mdl-textfield__label" for="name">Name</label>
+      </div>
+
+      <!-- Schedule -->
+      <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+        <input class="mdl-textfield__input" type="text" id="schedule" name="schedule"/>
+        <label class="mdl-textfield__label" for="Schedule">Schedule</label>
+      </div>
+
+    </div>
+    <div class="mdl-cell mdl-cell--8-col">
+
+      <!-- Script -->
+      <div id="script" class="script-editor">// Write something here...</div>
+
+    </div>
+  </div>
+  <div class="mdl-grid">
+    <div class="mdl-cell mdl-cell--12-col">
+      <button type="submit" class="mdl-button mdl-js-button mdl-button--primary">Create</button>
+    </div>
+  </div>
+</form>
+
+{{/* TODO(elct9620): Below shoul split using block style */}}
+<script>
+  window.onload = function() {
+    // Setup Job Script Editor
+    var editor = ace.edit("script")
+    editor.setTheme("ace/theme/solarized_dark")
+    editor.getSession().setMode("ace/mode/javascript")
+    editor.setFontSize(14)
+
+    var jobName, jobSchedule, jobScript
+    // Handle Form using Ajax
+    var jobForm = document.getElementById("job")
+    jobForm.onsubmit = function(e) {
+      e.preventDefault()
+
+      jobName = this.name.value
+      jobSchedule = this.schedule.value
+      jobScript = editor.getValue()
+
+      promise.post("/jobs", {
+        name: jobName,
+        schedule: jobSchedule,
+        script: jobScript
+      }).then(function(err, result, xhr) {
+        if(err) {
+          return alert("Something wrong, please retry later...")
+        }
+        // Simple do redirect
+        location.href = "/jobs"
+      })
+
+      return 0
+    }
+  }
+</script>
 
 {{ template "_common/footer" . }}
 

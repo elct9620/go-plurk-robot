@@ -2,6 +2,10 @@ body {
   background-color: #EFEFEF;
 }
 
+main {
+  position: relative;
+}
+
 #login-form {
   margin: 0 auto;
   margin-top: 10em;
@@ -25,4 +29,17 @@ body {
 
 .table-center {
   margin: 0 auto;
+}
+
+.script-editor {
+  min-height: 50vh;
+}
+
+.align-right {
+  text-align: right;
+}
+
+.with-add {
+  margin-top: -45px;
+  z-index: 5;
 }

@@ -21,6 +21,6 @@
 
     {{ template "_common/navigation" . }}
 
-    <main class="mdl-layout__content">
+    <main class="mdl-layout__content {{ if .WithAdd }}with-add{{ end }}">
 
 {{ end }}
