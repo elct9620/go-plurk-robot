@@ -81,7 +81,10 @@ func getClientIP(r *http.Request) string {
 }
 
 func login(c *echo.Context) (err error) {
-	return c.Render(200, "login", struct{ HideNav bool }{true})
+	return c.Render(200, "login", struct {
+		HideNav bool
+		WithAdd bool
+	}{true, false})
 }
 
 func verifyLogin(c *echo.Context) (err error) {

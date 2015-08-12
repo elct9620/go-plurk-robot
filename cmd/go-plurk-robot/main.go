@@ -58,7 +58,7 @@ func main() {
 		PersistentPreRun: setupClient,
 	}
 	// Add Commands
-	rootCmd.AddCommand(cmdAddPlurk, cmdAddResponse, cmdServe, cmdRobot)
+	rootCmd.AddCommand(cmdAddPlurk, cmdAddResponse, cmdServe, cmdRobot, cmdCreateUser)
 	// Setup Flags
 	rootCmd.PersistentFlags().StringVarP(&RobotName, "name", "n", RobotName, "The robot name")
 	rootCmd.PersistentFlags().StringVarP(&LogFileName, "log", "l", "", "The logfile path, default is STDOUT")

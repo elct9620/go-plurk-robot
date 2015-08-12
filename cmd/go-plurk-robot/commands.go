@@ -1,6 +1,7 @@
 package main
 
 import (
+	"github.com/elct9620/go-plurk-robot/db"
 	"github.com/elct9620/go-plurk-robot/logger"
 	"github.com/elct9620/go-plurk-robot/robot"
 	"github.com/elct9620/go-plurk-robot/server"
@@ -100,5 +101,34 @@ var cmdRobot = &cobra.Command{
 		if r != nil {
 			r.Start()
 		}
+	},
+}
+
+var cmdCreateUser = &cobra.Command{
+	Use:   "useradd",
+	Short: "Create a user",
+	Long:  `Create a user for admin plurk robot script, first argument is username, secondary is password`,
+	Run: func(cmd *cobra.Command, args []string) {
+		session, err := db.OpenSession("")
+
+		if err != nil {
+			logger.FError(cmd.Out(), err.Error())
+			return
+		}
+
+		if len(args) < 2 {
+			logger.FError(cmd.Out(), "You should specify username and password")
+			return
+		}
+
+		user, err := db.CreateUser(session.DB(""), args[0], args[1])
+
+		if err != nil {
+			logger.FError(cmd.Out(), err.Error())
+			return
+		}
+
+		logger.FInfo(cmd.Out(), "User \"%s\" create success!", user.Username)
+
 	},
 }
