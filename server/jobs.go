@@ -97,3 +97,19 @@ func updateJob(c *echo.Context) error {
 		Script   string
 	}{name, schedule, script})
 }
+
+func deleteJob(c *echo.Context) error {
+
+	mdb, _ := getDatabase()
+	id := c.Param("id")
+
+	defer mdb.Session.Close()
+
+	err := db.DeleteJob(mdb, id)
+
+	if err != nil {
+		return c.JSON(500, struct{ Error string }{err.Error()})
+	}
+
+	return c.JSON(200, nil)
+}

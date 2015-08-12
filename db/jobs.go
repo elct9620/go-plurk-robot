@@ -43,3 +43,9 @@ func UpdateJob(db *mgo.Database, id string, job Job) (err error) {
 
 	return jobs.UpdateId(bson.ObjectIdHex(id), job)
 }
+
+func DeleteJob(db *mgo.Database, id string) (err error) {
+	jobs := db.C("jobs")
+
+	return jobs.RemoveId(bson.ObjectIdHex(id))
+}

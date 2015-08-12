@@ -31,6 +31,10 @@ main {
   margin: 0 auto;
 }
 
+.mdl-data-table .mdl-button--icon {
+  margin-top: -6px; /* Patch button too height problem */
+}
+
 .script-editor {
   min-height: 50vh;
 }

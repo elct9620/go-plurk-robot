@@ -94,6 +94,7 @@ func setupRoute(s *echo.Echo) {
 
 	s.Get("/job/:id", getJob)
 	s.Put("/job/:id", updateJob)
+	s.Delete("/job/:id", deleteJob)
 }
 
 func index(c *echo.Context) error {

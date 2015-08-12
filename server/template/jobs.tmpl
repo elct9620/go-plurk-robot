@@ -20,20 +20,53 @@
     <table class="mdl-data-table mdl-js-data-table mdl-shadow--2dp mdl-data-table--selectable table-center">
       <thead>
         <tr>
-          <th class="mdl-data-table__cell--non-numberic">Name</th>
-          <th class="mdl-data-table__cell--non-numberic">Schedule</th>
+          <th class="mdl-data-table__cell--non-numeric">Name</th>
+          <th class="mdl-data-table__cell--non-numeric">Schedule</th>
+          <th class="mdl-data-table__cell--non-numeric">Action</th>
         </tr>
       </thead>
       {{ range .Jobs }}
       <tr>
-        <td class="mdl-data-table__cell--non-numberic"><a href="/job/{{ .Id.Hex }}">{{ .Name }}</a></td>
-        <td class="mdl-data-table__cell--non-numberic">{{ .Schedule }}</td>
+        <td class="mdl-data-table__cell--non-numeric"><a href="/job/{{ .Id.Hex }}">{{ .Name }}</a></td>
+        <td class="mdl-data-table__cell--non-numeric">{{ .Schedule }}</td>
+        <td>
+          <a class="mdl-button mdl-button--icon mdl-js-button mdl-button--accent method-delete" href="/job/{{ .Id.Hex }}">
+            <i class="material-icons">clear</i>
+          </a>
+        </td>
       </tr>
       {{ end }}
     </table>
   </div>
   <div class="mdl-cell mdl-cell--2-col"></div>
 </div>
+
+<script>
+  // TODO(elct9620): Should use block style to insert script
+
+window.onload = function() {
+  var deleteButtons = document.querySelectorAll(".method-delete")
+  var i = 0, button
+
+  for(; i < deleteButtons.length; i++ ) {
+    button = deleteButtons[i]
+    button.onclick = handleDelete
+  }
+}
+
+function handleDelete(e) {
+  e.preventDefault()
+
+  promise.del(this.href).then(function(err, result, xhr) {
+    if(err) {
+      return alert("Something wrong, please retry later...")
+    }
+    // Simple refresh webpage
+    location.href = "/jobs"
+  })
+}
+
+</script>
 
 {{ template "_common/footer" . }}
 
