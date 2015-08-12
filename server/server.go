@@ -14,7 +14,8 @@ import (
 )
 
 var (
-	cookie *sessions.CookieStore
+	cookie  *sessions.CookieStore
+	appRoot string
 )
 
 type Renderer struct {
@@ -32,12 +33,14 @@ func getDatabase() (mdb *mgo.Database, err error) {
 	return
 }
 
-func Serve(Port string) {
+func Serve(Port string, AppRoot string) {
 
 	// Fallback port to 5000 for local test
 	if len(Port) <= 0 {
 		Port = "5000"
 	}
+
+	appRoot = AppRoot
 
 	cookie = NewCookieStore()
 
@@ -64,9 +67,14 @@ func Serve(Port string) {
 }
 
 func getRenderer() *Renderer {
-	// Get correctly path to template file
-	_, filename, _, _ := runtime.Caller(1)
-	tmplPath := filepath.Dir(filename)
+	var tmplPath string
+	if len(appRoot) <= 0 {
+		// Get correctly path to template file
+		_, filename, _, _ := runtime.Caller(1)
+		tmplPath = filepath.Dir(filename)
+	} else {
+		tmplPath = appRoot + "/server"
+	}
 	templates := template.Must(template.ParseGlob(tmplPath + "/template/*.tmpl"))
 	templates.ParseGlob(tmplPath + "/template/*/*.tmpl")
 	return &Renderer{
@@ -75,8 +83,13 @@ func getRenderer() *Renderer {
 }
 
 func setupStatic(server *echo.Echo) {
-	_, filename, _, _ := runtime.Caller(1)
-	packagePath := filepath.Dir(filename)
+	var packagePath string
+	if len(appRoot) <= 0 {
+		_, filename, _, _ := runtime.Caller(1)
+		packagePath = filepath.Dir(filename)
+	} else {
+		packagePath = appRoot + "/server"
+	}
 	server.Static("/js", packagePath+"/static/js")
 	server.Static("/css", packagePath+"/static/css")
 	server.Static("/vendor", packagePath+"/static/vendor")

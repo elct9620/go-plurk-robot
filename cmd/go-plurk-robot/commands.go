@@ -20,6 +20,7 @@ func setupCommandFlags() {
 
 	// Add Server
 	cmdServe.Flags().StringVarP(&Port, "port", "p", "5000", "Specify web server port")
+	cmdServe.Flags().StringP("root", "r", "", "Specify app root if cannot found tempalte file")
 }
 
 // A shortcut for Add Plurk, can use with cronjob
@@ -86,7 +87,8 @@ var cmdServe = &cobra.Command{
 	Short: "Start a Web UI for robot",
 	Long:  `Start a Web UI with analytics and some useful tool for robot and plurk`,
 	Run: func(cmd *cobra.Command, args []string) {
-		server.Serve(Port)
+		appRoot, _ := cmd.Flags().GetString("root")
+		server.Serve(Port, appRoot)
 	},
 }
 
